@@ -7,12 +7,13 @@ class PurchaseMail {
 
   async handle (job, done) {
     const { ad, user, content } = job.data
-    await Mail.sendasdsMail({
-      from: '"Nicholas Ferrer" <nicholasferrer@hotmail.com>',
+
+    await Mail.sendMail({
+      from: '"Diego Fernandes" <diego@rocketseat.com.br>',
       to: ad.author.email,
       subject: `Solicitação de compra: ${ad.title}`,
       template: 'purchase',
-      context: { user, content, ad: ad }
+      context: { user, content, ad }
     })
 
     return done()

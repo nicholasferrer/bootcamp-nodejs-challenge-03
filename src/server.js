@@ -1,10 +1,10 @@
 require('dotenv').config()
 
 const express = require('express')
-const validate = require('express-validation')
+const mongoose = require('mongoose')
 const Youch = require('youch')
 const Sentry = require('@sentry/node')
-const mongoose = require('mongoose')
+const validate = require('express-validation')
 const databaseConfig = require('./config/database')
 const sentryConfig = require('./config/sentry')
 
@@ -13,9 +13,9 @@ class App {
     this.express = express()
     this.isDev = process.env.NODE_ENV !== 'production'
 
+    this.sentry()
     this.database()
     this.middlewares()
-    this.sentry()
     this.routes()
     this.exception()
   }
@@ -25,10 +25,13 @@ class App {
   }
 
   database () {
-    mongoose.connect(databaseConfig.uri, {
-      useCreateIndex: true,
-      useNewUrlParser: true
-    })
+    mongoose.connect(
+      databaseConfig.uri,
+      {
+        useCreateIndex: true,
+        useNewUrlParser: true
+      }
+    )
   }
 
   middlewares () {
@@ -51,7 +54,7 @@ class App {
       }
 
       if (process.env.NODE_ENV !== 'production') {
-        const youch = new Youch(err)
+        const youch = new Youch(err, req)
 
         return res.json(await youch.toJSON())
       }
